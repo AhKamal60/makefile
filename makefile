@@ -1,10 +1,11 @@
-vpath %.c ./src
-vpath %.h ./inc
+vpath %.c ./Src
+vpath %.h ./INC
 CC = gcc_S
-SRC_PATH = ./src/
+SRC_PATH =./Src/
 LINK_TARGET = app.exe
-INCLUDE_PATH = ./inc/
-OBJ = main.o LCD.o DIO.o code.o
+INCLUDE_PATH =./INC/
+DEP_PATH =./Dep/
+OBJ = $(DEP_PATH)main.o $(DEP_PATH)LCD.o $(DEP_PATH)DIO.o $(DEP_PATH)code.o
 CLEAN_TARGET = $(LINK_TARGET) $(OBJ)
 all:$(LINK_TARGET)
 	echo Building done !
@@ -13,15 +14,16 @@ clean:
 	echo Cleaning done !
 $(LINK_TARGET): $(OBJ)
 # name of the specified object file should be explicitly added here
-	$(CC) $(OBJ) -o $@
+	$(CC) $^ -o $@
 # and here also
 	echo Linking done !
 #%.o: %.c
-code.o :  code.c
-	$(CC) -c  $< -o $@
-main.o : main.c main.h LCD.h DIO.h code.h
-	$(CC) -c $< -o $@
-LCD.o : LCD.c LCD.h DIO.h code.h 
-	$(CC) -c $< -o $@
-DIO.o : DIO.c DIO.h code.h
-	$(CC) -c $< -o $@
+code.o : code.c code.h
+	$(CC) -c  -I$(INCLUDE_PATH) $< -o $(DEP_PATH)$@
+main.o : main.c code.o
+	$(CC) -c -I$(INCLUDE_PATH) $< -o $(DEP_PATH)$@
+LCD.o : LCD.c LCD.h DIO.h code.o
+	$(CC) -c -I$(INCLUDE_PATH) $< -o $(DEP_PATH)$@
+DIO.o : DIO.c DIO.h code.o
+	$(CC) -c -I$(INCLUDE_PATH) $< -o $(DEP_PATH)$@
+ 
